@@ -13,108 +13,108 @@ namespace ParkyAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NationalParksController : ControllerBase
+    public class TrailsController : ControllerBase
     {
-        private readonly INationalParkRepository _npRepo;
+
+        private readonly ITrailRepository _trailRepo;
         private readonly IMapper _mapper;
 
-        public NationalParksController(INationalParkRepository npRepo, IMapper mapper)
+        public TrailsController(ITrailRepository trailRepo, IMapper mapper)
         {
-            _npRepo = npRepo;
+            _trailRepo = trailRepo;
             _mapper = mapper;
         }
 
         /// <summary>
-        /// Get a list of all national parks
+        /// Get a list of all trails
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(List<NationalParkDto>))]
-        public IActionResult GetNationalParks()
+        [ProducesResponseType(200, Type = typeof(List<TrailDto>))]
+        public IActionResult GetTrails()
         {
-            var objList = _npRepo.GetNationalParks();
-            var objListDto = new List<NationalParkDto>();
+            var objList = _trailRepo.GetTrails();
+            var objDtoList = new List<TrailDto>();
 
             foreach (var obj in objList)
             {
-                objListDto.Add(_mapper.Map<NationalParkDto>(obj));
+                objDtoList.Add(_mapper.Map<TrailDto>(obj));
             }
-            return Ok(objListDto);
+            return Ok(objDtoList);
         }
 
         /// <summary>
-        /// Get specific national park
+        /// Get specific trail
         /// </summary>
-        /// <param name="nationalParkId">specific national park ID</param>
+        /// <param name="trailId">specific trail ID</param>
         /// <returns></returns>
-        [HttpGet("{nationalParkId:int}", Name = "GetNationalPark")]
-        [ProducesResponseType(200, Type = typeof(NationalParkDto))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpGet("{trailId:int}", Name = "GetTrail")]
+        [ProducesResponseType(200, Type = typeof(TrailDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
-        public IActionResult GetNationPark(int nationalParkId)
+        public IActionResult GetTrail(int trailId)
         {
-            var obj = _npRepo.GetNationalPark(nationalParkId);
+            var obj = _trailRepo.GetTrail(trailId);
             if (obj == null)
             {
                 return NotFound();
             }
-            var objDto = _mapper.Map<NationalParkDto>(obj);
+            var objDto = _mapper.Map<TrailDto>(obj);
             return Ok(objDto);
         }
 
         /// <summary>
-        /// Create a new national park
+        /// Create a new trail to specific national park
         /// </summary>
-        /// <param name="nationalParkDto">national park DTO</param>
+        /// <param name="trailDto">trail DTO</param>
         /// <returns></returns>
         [HttpPost]
-        [ProducesResponseType(201, Type = typeof(NationalParkDto))]
+        [ProducesResponseType(201, Type = typeof(TrailDto))]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult CreateNationalPark([FromBody] NationalParkDto nationalParkDto)
+        public IActionResult CreateTrail([FromBody] TrailCreateDto trailDto)
         {
-            if (nationalParkDto == null)
+            if (trailDto == null)
             {
                 return BadRequest(ModelState);
             }
 
-            if (_npRepo.NationalParkExists(nationalParkDto.Name))
+            if (_trailRepo.TrailExists(trailDto.Name))
             {
-                ModelState.AddModelError("", "National Park Exists!");
+                ModelState.AddModelError("", "Trail Exists!");
                 return StatusCode(404, ModelState);
             }
 
-            var obj = _mapper.Map<NationalPark>(nationalParkDto);
-            if (!_npRepo.CreateNationalPark(obj))
+            var obj = _mapper.Map<Trail>(trailDto);
+            if (!_trailRepo.CreateTrail(obj))
             {
                 ModelState.AddModelError("", $"Something went wrong when saving the record {obj.Name}");
                 return StatusCode(500, ModelState);
             }
 
-            return CreatedAtRoute("GetNationalPark", new { nationalParkId = obj.Id }, obj);
+            return CreatedAtRoute("GetTrail", new { trailId = obj.Id }, obj);
         }
 
         /// <summary>
-        /// Update specific national park
+        /// Update specific trail
         /// </summary>
-        /// <param name="nationalParkId"> specific national park ID</param>
-        /// <param name="nationalParkDto">new national park object</param>
+        /// <param name="trailId">specific trail ID</param>
+        /// <param name="trailDto">new trail object</param>
         /// <returns></returns>
-        [HttpPatch("{nationalParkId:int}", Name = "UpdateNationalPark")]
+        [HttpPatch("{trailId:int}", Name = "UpdateTrail")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult UpdateNationalPark(int nationalParkId, [FromBody] NationalParkDto nationalParkDto)
+        public IActionResult UpdateTrail(int trailId, [FromBody] TrailUpdateDto trailDto)
         {
-            if (nationalParkDto == null || nationalParkId != nationalParkDto.Id)
+            if (trailDto == null || trailId != trailDto.Id)
             {
                 return BadRequest(ModelState);
             }
 
-            var obj = _mapper.Map<NationalPark>(nationalParkDto);
-            if (!_npRepo.UpdateNationalPark(obj))
+            var obj = _mapper.Map<Trail>(trailDto);
+            if (!_trailRepo.UpdateTrail(obj))
             {
                 ModelState.AddModelError("", $"Something went wrong when updating the record {obj.Name}");
                 return StatusCode(500, ModelState);
@@ -124,24 +124,24 @@ namespace ParkyAPI.Controllers
         }
 
         /// <summary>
-        /// Delete specific national park
+        /// Delete specific trail
         /// </summary>
-        /// <param name="nationalParkId"> specific national park ID</param>
+        /// <param name="trailId">specific trail ID</param>
         /// <returns></returns>
-        [HttpDelete("{nationalParkId:int}", Name = "DeleteNationalPark")]
+        [HttpDelete("{trailId:int}", Name = "DeleteTrail")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult DeleteNationalPark(int nationalParkId)
+        public IActionResult DeleteTrail(int trailId)
         {
-            if (!_npRepo.NationalParkExists(nationalParkId))
+            if (!_trailRepo.TrailExists(trailId))
             {
                 return NotFound();
             }
 
-            var obj = _npRepo.GetNationalPark(nationalParkId);
-            if (!_npRepo.DeleteNationalPark(obj))
+            var obj = _trailRepo.GetTrail(trailId);
+            if (!_trailRepo.DeleteTrail(obj))
             {
                 ModelState.AddModelError("", $"Something went wrong when deleting the record {obj.Name}");
                 return StatusCode(500, ModelState);
