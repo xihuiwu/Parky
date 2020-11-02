@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParkyAPI.Repository.IRepository
 {
-    interface INationalParkRepository
+    public interface INationalParkRepository
     {
         ICollection<NationalPark> GetNationalParks();
         NationalPark GetNationalPark(int nationalParkId);

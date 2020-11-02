@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParkyAPI.Repository.IRepository
 {
-    interface ITrailRepository
+    public interface ITrailRepository
     {
         ICollection<Trail> GetTrails();
         ICollection<Trail> GetTrailsInNationalPark(int npId);
