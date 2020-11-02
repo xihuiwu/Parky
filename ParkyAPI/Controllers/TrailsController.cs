@@ -11,8 +11,10 @@ using ParkyAPI.Repository.IRepository;
 
 namespace ParkyAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/trails")]
+    //[Route("api/[controller]")]
     [ApiController]
+    //[ApiExplorerSettings(GroupName = "ParkyOpenAPISpecTrail")]
     public class TrailsController : ControllerBase
     {
 
@@ -29,7 +31,7 @@ namespace ParkyAPI.Controllers
         /// Get a list of all trails
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("[action]", Name = "GetTrails")]
         [ProducesResponseType(200, Type = typeof(List<TrailDto>))]
         public IActionResult GetTrails()
         {
@@ -48,7 +50,7 @@ namespace ParkyAPI.Controllers
         /// </summary>
         /// <param name="trailId">specific trail ID</param>
         /// <returns></returns>
-        [HttpGet("{trailId:int}", Name = "GetTrail")]
+        [HttpGet("[action]/{trailId:int}", Name = "GetTrail")]
         [ProducesResponseType(200, Type = typeof(TrailDto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
@@ -64,11 +66,36 @@ namespace ParkyAPI.Controllers
         }
 
         /// <summary>
+        /// Get a list of trails from specific national park
+        /// </summary>
+        /// <param name="nationalParkId">specific national park ID</param>
+        /// <returns></returns>
+        [HttpGet("[action]/{nationalParkId:int}", Name = "GetTrailsInNationalPark")]
+        [ProducesResponseType(200, Type = typeof(List<TrailDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesDefaultResponseType]
+        public IActionResult GetTrailsInNationalPark(int nationalParkId)
+        {
+            var objList = _trailRepo.GetTrailsInNationalPark(nationalParkId);
+            if (objList == null)
+            {
+                return NotFound();
+            }
+
+            var objDtoList = new List<TrailDto>();
+            foreach (var obj in objList)
+            {
+                objDtoList.Add(_mapper.Map<TrailDto>(obj));
+            }
+            return Ok(objDtoList);
+        }
+
+        /// <summary>
         /// Create a new trail to specific national park
         /// </summary>
         /// <param name="trailDto">trail DTO</param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("[action]", Name = "CreateTrail")]
         [ProducesResponseType(201, Type = typeof(TrailDto))]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -102,7 +129,7 @@ namespace ParkyAPI.Controllers
         /// <param name="trailId">specific trail ID</param>
         /// <param name="trailDto">new trail object</param>
         /// <returns></returns>
-        [HttpPatch("{trailId:int}", Name = "UpdateTrail")]
+        [HttpPatch("[action]/{trailId:int}", Name = "UpdateTrail")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -128,7 +155,7 @@ namespace ParkyAPI.Controllers
         /// </summary>
         /// <param name="trailId">specific trail ID</param>
         /// <returns></returns>
-        [HttpDelete("{trailId:int}", Name = "DeleteTrail")]
+        [HttpDelete("[action]/{trailId:int}", Name = "DeleteTrail")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
