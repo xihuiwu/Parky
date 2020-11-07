@@ -7,7 +7,7 @@ $(document).ready(function () {
 function loadDataTable() {
     dataTable = $('#tblData').DataTable({
         "ajax": {
-            "url": "/trails/GetAllTrail",
+            "url": "/trails/GetAllNationalPark",
             "type": "GET",
             "datatype": "json"
         },
@@ -20,7 +20,7 @@ function loadDataTable() {
                 "data": "id",
                 "render": function (data) {
                     return `<div class="text-center">
-                                <a herf="/trails/Upsert/${data}" class='btn btn-success text-white'
+                                <a href="/trails/Upsert/${data}" class='btn btn-success text-white'
                                     style='cursor:pointer;'> <i class='far fa-edit'></i></a>
                                     &nbsp;
                                 <a onclick=Delete("/trails/Delete/${data}") class='btn btn-danger text-white'
@@ -36,7 +36,7 @@ function loadDataTable() {
 function Delete(url) {
     swal({
         title: "Are you sure you want to Delete?",
-        text: "You will not able to restore the data!",
+        text: "You will not be able to restore the data!",
         icon: "warning",
         buttons: true,
         dangerMode: true

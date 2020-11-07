@@ -18,7 +18,7 @@ function loadDataTable() {
                 "data": "id",
                 "render": function (data) {
                     return `<div class="text-center">
-                                <a herf="/nationalParks/Upsert/${data}" class='btn btn-success text-white'
+                                <a href="/nationalParks/Upsert/${data}" class='btn btn-success text-white'
                                     style='cursor:pointer;'> <i class='far fa-edit'></i></a>
                                     &nbsp;
                                 <a onclick=Delete("/nationalParks/Delete/${data}") class='btn btn-danger text-white'
@@ -34,7 +34,7 @@ function loadDataTable() {
 function Delete(url) {
     swal({
         title: "Are you sure you want to Delete?",
-        text: "You will not able to restore the data!",
+        text: "You will not be able to restore the data!",
         icon: "warning",
         buttons: true,
         dangerMode: true
