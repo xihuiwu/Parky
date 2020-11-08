@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace ParkyWeb.Repository
             _clientFactory = clientFactory;
         }
 
-        public async Task<bool> CreateAsync(string url, T objToCreate)
+        public async Task<bool> CreateAsync(string url, T objToCreate, string token="")
         {
             var request = new HttpRequestMessage(HttpMethod.Post, url);
             if (objToCreate != null)
@@ -33,6 +34,11 @@ namespace ParkyWeb.Repository
             }
 
             var client = _clientFactory.CreateClient();
+            if (token != null && token.Length != 0)
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
             HttpResponseMessage response = await client.SendAsync(request);
             if (response.StatusCode == System.Net.HttpStatusCode.Created)
             {
@@ -44,11 +50,16 @@ namespace ParkyWeb.Repository
             }
         }
 
-        public async Task<bool> DeleteAsync(string url, int id)
+        public async Task<bool> DeleteAsync(string url, int id, string token="")
         {
             var request = new HttpRequestMessage(HttpMethod.Delete, url+id);
 
             var client = _clientFactory.CreateClient();
+            if (token != null && token.Length != 0)
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
             HttpResponseMessage response = await client.SendAsync(request);
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
@@ -57,11 +68,16 @@ namespace ParkyWeb.Repository
             return false;
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(string url)
+        public async Task<IEnumerable<T>> GetAllAsync(string url, string token="")
         {
             var request = new HttpRequestMessage(HttpMethod.Get, url);
 
             var client = _clientFactory.CreateClient();
+            if (token != null && token.Length != 0)
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
             HttpResponseMessage response = await client.SendAsync(request);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -71,11 +87,16 @@ namespace ParkyWeb.Repository
             return null;
         }
 
-        public async Task<T> GetAsync(string url, int id)
+        public async Task<T> GetAsync(string url, int id, string token="")
         {
             var request = new HttpRequestMessage(HttpMethod.Get, url+id);
 
             var client = _clientFactory.CreateClient();
+            if (token != null && token.Length != 0)
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
             HttpResponseMessage response = await client.SendAsync(request);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -85,7 +106,7 @@ namespace ParkyWeb.Repository
             return null;
         }
 
-        public async Task<bool> UpdateAsync(string url, T objToUpdate)
+        public async Task<bool> UpdateAsync(string url, T objToUpdate, string token="")
         {
             var request = new HttpRequestMessage(HttpMethod.Patch, url);
             if (objToUpdate != null)
@@ -99,6 +120,11 @@ namespace ParkyWeb.Repository
             }
 
             var client = _clientFactory.CreateClient();
+            if (token != null && token.Length != 0)
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
             HttpResponseMessage response = await client.SendAsync(request);
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
